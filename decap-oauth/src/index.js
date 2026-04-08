@@ -34,20 +34,21 @@ export default {
       const data = await tokenRes.json();
 
       return new Response(
-			`
-			<!doctype html>
+			`<!doctype html>
 			<html>
 			<body>
 			<script>
 			(function() {
-			const token = "${data.access_token}";
+			const receiveMessage = (message) => {
+				window.opener.postMessage(
+				'authorization:github:success:' + "${data.access_token}",
+				message.origin
+				);
+			};
 
 			if (window.opener) {
-				window.opener.postMessage(
-				"authorization:github:success:" + token,
-				window.location.origin
-				);
-				window.close();
+				window.opener.postMessage('authorizing:github', '*');
+				window.addEventListener("message", receiveMessage, false);
 			} else {
 				document.body.innerText =
 				"Authorization completed. You may close this window.";
@@ -55,10 +56,9 @@ export default {
 			})();
 			</script>
 			</body>
-			</html>
-			`,
+			</html>`,
 			{
-				headers: { "Content-Type": "text/html" },
+			headers: { "Content-Type": "text/html" },
 			}
 		);
     }
