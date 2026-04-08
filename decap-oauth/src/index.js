@@ -34,15 +34,33 @@ export default {
       const data = await tokenRes.json();
 
       return new Response(
-        `<script>
-          window.opener.postMessage(
-            'authorization:github:success:${data.access_token}',
-            '*'
-          );
-          window.close();
-        </script>`,
-        { headers: { "Content-Type": "text/html" } }
-      );
+			`
+			<!doctype html>
+			<html>
+			<body>
+			<script>
+			(function() {
+			const token = "${data.access_token}";
+
+			if (window.opener) {
+				window.opener.postMessage(
+				"authorization:github:success:" + token,
+				window.location.origin
+				);
+				window.close();
+			} else {
+				document.body.innerText =
+				"Authorization completed. You may close this window.";
+			}
+			})();
+			</script>
+			</body>
+			</html>
+			`,
+			{
+				headers: { "Content-Type": "text/html" },
+			}
+		);
     }
 
     return new Response("Not Found", { status: 404 });
