@@ -39,16 +39,25 @@ export default {
 			<body>
 			<script>
 			(function() {
-			const receiveMessage = (message) => {
+			function sendToken(origin) {
+				const data = {
+				token: "${data.access_token}",
+				provider: "github"
+				};
+
 				window.opener.postMessage(
-				'authorization:github:success:' + "${data.access_token}",
-				message.origin
+				"authorization:github:success:" + JSON.stringify(data),
+				origin
 				);
-			};
+				window.close();
+			}
 
 			if (window.opener) {
-				window.opener.postMessage('authorizing:github', '*');
-				window.addEventListener("message", receiveMessage, false);
+				window.opener.postMessage("authorizing:github", "*");
+
+				window.addEventListener("message", function(e) {
+				sendToken(e.origin);
+				});
 			} else {
 				document.body.innerText =
 				"Authorization completed. You may close this window.";
