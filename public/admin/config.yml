@@ -5,7 +5,8 @@ backend:
 
   base_url: https://autosymptoms.net
   auth_endpoint: /api/auth
-  site_url: https://autosymptoms.net
+  
+site_url: https://autosymptoms.net
 
 media_folder: "public/images"
 public_folder: "/images"
